@@ -4,17 +4,17 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
+  HashRouter,
   Switch,
   Link,
 } from 'react-router-dom';
-import logo from './logo.svg';
 import './App.css';
 
 import moviesList from './moviesList';
 import movieDetail from './movieDetail';
 
 const App = () => (
-  <Router>
+  <HashRouter basename='/'>
     <div className="App">
       <header className="App-header">
         <Link to="/">
@@ -26,7 +26,7 @@ const App = () => (
         <Route path="/:id" component={movieDetail} />
       </Switch>
     </div>
-  </Router>
+  </HashRouter >
 );
 
 export default App;
