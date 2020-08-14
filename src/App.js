@@ -12,6 +12,7 @@ import './App.css';
 
 import moviesList from './moviesList';
 import movieDetail from './movieDetail';
+import movieSearch from './movieSearch';
 
 const App = () => (
   <HashRouter basename='/'>
@@ -22,6 +23,7 @@ const App = () => (
         </Link>
       </header>
       <Switch>
+        <Route component={movieSearch} />
         <Route exact path="/" component={moviesList} />
         <Route path="/:id" component={movieDetail} />
       </Switch>
