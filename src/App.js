@@ -22,8 +22,8 @@ const App = () => (
           <h1>MOVIEDB</h1>
         </Link>
       </header>
+      <movieSearch />
       <Switch>
-        <Route component={movieSearch} />
         <Route exact path="/" component={moviesList} />
         <Route path="/:id" component={movieDetail} />
       </Switch>
