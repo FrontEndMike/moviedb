@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Movie from './movies';
 
 class movieSearch extends Component {
-  
-  render() {
-    return (
-      <FormField>
-        <label>
-          Name:
-          <input type="text" name="name" />
-        </label>
-        <input type="submit" value="Submit" />
-      </FormField>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <form>
+                <label>
+                Search Movies:
+                <input
+                    type="text"
+                    value={this.props.searchString}
+                    ref="searchStringInput"
+                    onchange={this.handleChange}
+                />
+                </label>
+                <input type="submit" value="Search"  />
+            </form>
+            </div>
+        );
+    }
 }
 
-
 export default movieSearch;
-
-const FormField = styled.div `
-	display: grid;
-	padding: 1rem;
-`;

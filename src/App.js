@@ -22,7 +22,7 @@ const App = () => (
           <h1>MOVIEDB</h1>
         </Link>
       </header>
-      <movieSearch />
+      <Route component={movieSearch} />
       <Switch>
         <Route exact path="/" component={moviesList} />
         <Route path="/:id" component={movieDetail} />
