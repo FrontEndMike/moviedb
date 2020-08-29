@@ -9,13 +9,14 @@ class movieSearch extends Component {
                 <form>
                 <label>
                 Search Movies:
+                </label>
                 <input
                     type="text"
                     value={this.props.searchString}
                     ref="searchStringInput"
-                    onchange={this.handleChange}
+                    onChange={this.handleChange}
                 />
-                </label>
+                
                 <input type="submit" value="Search"  />
             </form>
             </div>

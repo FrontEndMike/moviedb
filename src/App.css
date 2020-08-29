@@ -2,7 +2,21 @@
   text-align: center;
 }
 
-
+.searchBar{
+  padding: 2rem 1rem;
+}
+label{
+  color: white;
+  margin-right: 1rem;
+}
+input[type = submit]{
+  background-color: rgb(5, 97, 128);
+  border: none;
+  border-radius: 25px;
+  padding: 0.25rem 1rem;
+  margin-left: 1rem;
+  color: white;
+}
 @media (prefers-reduced-motion: no-preference) {
 }
 .App-intro{

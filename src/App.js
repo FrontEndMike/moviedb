@@ -22,7 +22,9 @@ const App = () => (
           <h1>MOVIEDB</h1>
         </Link>
       </header>
-      <Route component={movieSearch} />
+      <div className="searchBar">
+        <Route component={movieSearch} />
+      </div>
       <Switch>
         <Route exact path="/" component={moviesList} />
         <Route path="/:id" component={movieDetail} />
