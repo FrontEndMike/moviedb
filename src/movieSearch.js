@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import Movie from './movies';
 
 class movieSearch extends Component {
     render() {
