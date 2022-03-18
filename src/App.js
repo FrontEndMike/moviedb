@@ -11,7 +11,7 @@ import './App.css';
 
 import moviesList from './moviesList';
 import movieDetail from './movieDetail';
-import movieSearch from './movieSearch';
+
 
 const App = () => (
   <HashRouter basename='/'>
