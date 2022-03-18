@@ -9,9 +9,8 @@ class moviesList extends PureComponent {
   
 async componentDidMount() {
     try {
-    const SEARCH_QUERY = "James Bond 007";
     const API_KEY = "a62fd138fc3adf6aa51790c63f1f498e";
-    const API_URL = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${SEARCH_QUERY}&page=1&include_adult=false`;
+    const API_URL = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1`;
     const res = await fetch(`${API_URL}`);
     const movies = await res.json();
     this.setState({
