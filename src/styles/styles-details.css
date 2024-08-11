@@ -54,6 +54,7 @@
     margin-top: 1rem;
     margin-bottom: 0rem;
     font-size: 3rem;
+    font-weight: 600;
   }
   
   .movie-info .poster {
@@ -71,6 +72,9 @@
     }
     .movie-image{
       max-width: 47%;
+    }
+    .movie-title {
+      font-size: 2rem;
     }
   }
   
@@ -108,6 +112,11 @@
   .similar-movies .single-card{
     width: 31%;
     padding: 0.5rem;
+  }
+  @media (max-width: 768px){
+    .similar-movies .single-card{
+      width: 47%;
+    }
   }
 
   @media (max-width: 600px){

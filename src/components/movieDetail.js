@@ -12,11 +12,12 @@ const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
 const MovieDetail = ({ match }) => {
   const [movie, setMovie] = useState({});
   const [images, setImages] = useState([]);
-  const [trailerKey, setTrailerKey] = useState(null); // Store only the video key
+  const [trailerKey, setTrailerKey] = useState(null);
   const [director, setDirector] = useState('');
   const [similarMovies, setSimilarMovies] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null); // For modal image
-  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false); // For trailer modal
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null); // Track index of the selected image
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -65,8 +66,8 @@ const MovieDetail = ({ match }) => {
       try {
         const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/similar?api_key=${API_KEY}&language=en-US`);
         const data = await res.json();
-        const filteredMovies = data.results.filter(movie => movie.backdrop_path); // Only include movies with backdrop path
-        setSimilarMovies(filteredMovies.slice(0, 3)); // Limit to 3 similar movies
+        const filteredMovies = data.results.filter(movie => movie.backdrop_path);
+        setSimilarMovies(filteredMovies.slice(0, 3));
       } catch (e) {
         console.log(e);
       }
@@ -79,21 +80,30 @@ const MovieDetail = ({ match }) => {
     fetchSimilarMovies();
   }, [match.params.id]);
 
-  const openImageModal = (imagePath) => {
-    setSelectedImage(imagePath);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [movie.id]);
+
+  const openImageModal = (index) => {
+    setSelectedImageIndex(index);
+    setIsImageModalOpen(true);
   };
 
   const closeImageModal = () => {
-    setSelectedImage(null);
+    setIsImageModalOpen(false);
   };
 
-  const openTrailerModal = () => {
-    setIsTrailerModalOpen(true);
+  const showPreviousImage = (e) => {
+    e.stopPropagation(); // Prevent event from bubbling up
+    setSelectedImageIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : images.length - 1)); // Cycles through the image array with prevIndex being the current image position
   };
 
-  const closeTrailerModal = () => {
-    setIsTrailerModalOpen(false);
+  const showNextImage = (e) => {
+    e.stopPropagation(); // Prevent event from bubbling up
+    setSelectedImageIndex(prevIndex => (prevIndex < images.length - 1 ? prevIndex + 1 : 0)); // Cycles through the image array with prevIndex being the current image position
   };
+
+  const currentImage = images[selectedImageIndex];
 
   return (
     <>
@@ -126,7 +136,7 @@ const MovieDetail = ({ match }) => {
                 : 'No genres available'}
             </p>
             {trailerKey && (
-              <button onClick={openTrailerModal} className="button trailer-button">Watch Trailer</button>
+              <button onClick={() => setIsTrailerModalOpen(true)} className="button trailer-button">Watch Trailer</button>
             )}
           </div>
         </div>
@@ -141,26 +151,28 @@ const MovieDetail = ({ match }) => {
                   src={`${IMAGE_PATH}${image.file_path}`}
                   alt={`Backdrop ${index + 1}`}
                   className="movie-image"
-                  onClick={() => openImageModal(`${BACKDROP_PATH}${image.file_path}`)}
+                  onClick={() => openImageModal(index)}
                 />
               ))}
             </div>
           </div>
         )}
 
-        {selectedImage && (
+        {isImageModalOpen && currentImage && (
           <div className="modal" onClick={closeImageModal}>
             <div className='modal-body'>
-              <span className="close">&times;</span>
-              <img className="modal-content" src={selectedImage} alt="Selected" />
+              <span className="close" onClick={closeImageModal}>&times;</span>
+              <button className="button nav-button left" onClick={showPreviousImage}>❮</button>
+              <img className="modal-image" src={`${BACKDROP_PATH}${currentImage.file_path}`} alt="Selected" />
+              <button className="button nav-button right" onClick={showNextImage}>❯</button>
             </div>
           </div>
         )}
 
         {isTrailerModalOpen && (
-          <div className="modal" onClick={closeTrailerModal}>
+          <div className="modal" onClick={() => setIsTrailerModalOpen(false)}>
             <div className='modal-body' onClick={e => e.stopPropagation()}>
-              <span className="close" onClick={closeTrailerModal}>&times;</span>
+              <span className="close" onClick={() => setIsTrailerModalOpen(false)}>&times;</span>
               <div className="video-responsive">
                 <iframe
                   title="Trailer"

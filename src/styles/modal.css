@@ -24,6 +24,7 @@
     padding: 2rem;
     max-width: 75rem;
     margin: 0 auto;
+    position: relative;
   }
 
   .video-responsive {
@@ -41,3 +42,34 @@
     height: 100%;
   }
   
+.modal .nav-button{
+    position: absolute;
+    top: 55%;
+    max-width: 1rem;
+    padding: 0.5rem 2rem;
+    text-align: center;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+@media (max-width: 768px){
+    .modal .nav-button{
+        top: 100%;
+    }
+}
+
+
+.modal-image{
+    max-width: 85%;
+    margin: 0 auto;
+}
+
+.modal  .nav-button.left {
+    left: 1rem;
+}
+
+.modal  .nav-button.right {
+    right: 1rem;
+}
