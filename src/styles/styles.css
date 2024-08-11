@@ -1,0 +1,29 @@
+/* styles/styles.css */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+
+  .MovieGrid {
+    display: grid;
+    padding: 1rem;
+    grid-template-columns: repeat(5, 1fr);
+    grid-row-gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .MovieGrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (max-width: 430px) {
+    .MovieGrid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-row-gap: 0.25rem;
+      padding: 0.25rem;
+    }
+  }
+  
