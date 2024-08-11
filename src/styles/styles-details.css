@@ -39,7 +39,7 @@
     text-align: left;
     display: flex;
     gap: 1rem;
-    max-width: 53rem;
+    max-width: 60rem;
     padding: 2rem 0rem;
     margin: 0rem auto;
   }
@@ -103,7 +103,7 @@
   }
 
   .similar-movies{
-    max-width: 53rem;
+    max-width: 60rem;
     margin: 0 auto;
     padding: 2rem 0rem;
   }
@@ -112,6 +112,7 @@
   .similar-movies .single-card{
     width: 31%;
     padding: 0.5rem;
+    font-size: 1rem;
   }
   @media (max-width: 768px){
     .similar-movies .single-card{
