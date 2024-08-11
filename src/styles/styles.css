@@ -32,6 +32,9 @@ body {
   .search-header{ 
     justify-content: center;
     display: flex;
+  }
+  .logo{
+    text-align: center;
   }    
 }
 .logo{
