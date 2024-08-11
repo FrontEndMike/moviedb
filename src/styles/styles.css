@@ -100,6 +100,7 @@ body {
     border: 1px solid black;
     transition: ease all .2s;
     box-shadow: 0 0 20px 0 #0000001a;
+    font-size: 16px;
   }
 
   
