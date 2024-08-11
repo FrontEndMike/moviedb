@@ -1,0 +1,58 @@
+.movie-card {
+    display: flex;
+    padding: 1rem;
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+    height: 90%;
+}
+
+.read-more{
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.read-more:after{
+    content: url('right-caret.svg');
+    line-height: 0;
+}
+
+.card-img{
+    width: 100%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    margin-bottom: 1rem;
+}
+
+.single-card {
+    width: 30%;
+    padding: 1rem;
+}
+@media screen and (max-width: 1200px) {
+    .single-card {
+        width: 46%;
+    }
+}
+@media screen and (max-width: 850px) {
+    .single-card {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 850px) {
+    .movie-card:hover {
+        transform: scale(1.01);
+        transition: transform 0.3s ease;
+    }
+}
+ 
+.title{
+    margin-top: 0;
+}
+  
+  

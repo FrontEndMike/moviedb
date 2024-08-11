@@ -8,22 +8,28 @@ import {
   Link,
 } from 'react-router-dom';
 import './App.css';
-
-import moviesList from './moviesList';
-import movieDetail from './movieDetail';
+import './styles/styles-details.css'; 
+import './styles/styles.css';
+import './styles/search.css';
+import './styles/movie-card.css';
+import moviesList from './components/moviesList';
+import movieDetail from './components/movieDetail';
 
 
 const App = () => (
   <HashRouter basename='/'>
     <div className="App">
-      <header className="App-header">
+      <header className="search-header">
         <Link to="/">
-          <h1>MOVIEDB</h1>
+          <div className='logo'>
+            <img src="./images/mike-kaws.jpg" alt="Mike at the Kaws exhibit" />
+            <div>
+              <h1>Searchflix</h1>
+              <p>A Movie Search app created by @FrontEndMike</p>
+            </div>
+          </div>
         </Link>
       </header>
-      {/* <div className="searchBar">
-        <Route component={movieSearch} />
-      </div> */}
       <Switch>
         <Route exact path="/" component={moviesList} />
         <Route path="/:id" component={movieDetail} />
