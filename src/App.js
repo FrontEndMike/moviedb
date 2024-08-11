@@ -26,7 +26,7 @@ const App = () => (
             <img src="./images/mike-kaws.jpg" alt="Mike at the Kaws exhibit" />
             <div>
               <h1>Searchflix</h1>
-              <p>A Movie Search app created by @FrontEndMike</p>
+              <p>A Movie search engine created by @FrontEndMike</p>
             </div>
           </div>
         </Link>
