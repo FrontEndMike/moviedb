@@ -78,9 +78,13 @@ body {
   .flex-wrap{
     flex-wrap: wrap;
   }
-  
+
 .justify-content-center{
   justify-content: center;
+}
+
+.relative{
+  position: relative;
 }
 
   .button{

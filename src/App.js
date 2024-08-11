@@ -12,6 +12,7 @@ import './styles/styles-details.css';
 import './styles/styles.css';
 import './styles/search.css';
 import './styles/movie-card.css';
+import './styles/modal.css';
 import moviesList from './components/moviesList';
 import movieDetail from './components/movieDetail';
 

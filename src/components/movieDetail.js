@@ -11,9 +11,11 @@ const IMAGE_PATH = 'http://image.tmdb.org/t/p/w200';
 const MovieDetail = ({ match }) => {
   const [movie, setMovie] = useState({});
   const [images, setImages] = useState([]);
-  const [trailer, setTrailer] = useState(null);
+  const [trailerKey, setTrailerKey] = useState(null); // Store only the video key
   const [director, setDirector] = useState('');
   const [similarMovies, setSimilarMovies] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null); // For modal image
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false); // For trailer modal
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -51,8 +53,8 @@ const MovieDetail = ({ match }) => {
       try {
         const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/videos?api_key=a62fd138fc3adf6aa51790c63f1f498e`);
         const data = await res.json();
-        const trailerVideo = data.results.find(video => video.type === 'Trailer');
-        setTrailer(trailerVideo ? `https://www.youtube.com/watch?v=${trailerVideo.key}` : null);
+        const trailerVideo = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+        setTrailerKey(trailerVideo ? trailerVideo.key : null);
       } catch (e) {
         console.log(e);
       }
@@ -62,7 +64,8 @@ const MovieDetail = ({ match }) => {
       try {
         const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/similar?api_key=a62fd138fc3adf6aa51790c63f1f498e&language=en-US`);
         const data = await res.json();
-        setSimilarMovies(data.results.slice(0, 3)); // Limit to 3 similar movies
+        const filteredMovies = data.results.filter(movie => movie.backdrop_path); // Only include movies with backdrop path
+        setSimilarMovies(filteredMovies.slice(0, 3)); // Limit to 3 similar movies
       } catch (e) {
         console.log(e);
       }
@@ -75,13 +78,29 @@ const MovieDetail = ({ match }) => {
     fetchSimilarMovies();
   }, [match.params.id]);
 
+  const openImageModal = (imagePath) => {
+    setSelectedImage(imagePath);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
+  const openTrailerModal = () => {
+    setIsTrailerModalOpen(true);
+  };
+
+  const closeTrailerModal = () => {
+    setIsTrailerModalOpen(false);
+  };
+
   return (
     <>
       <div className="movie-wrapper" style={{ backgroundImage: `url(${BACKDROP_PATH}${movie.backdrop_path})` }}>
       </div>
-      <div className='container'>
-          <h1 className='movie-title text-center'>{movie.title}</h1>
-          <em className='block text-center'>{movie.tagline}</em>
+      <div className='container relative'>
+        <h1 className='movie-title text-center'>{movie.title}</h1>
+        <em className='block text-center'>{movie.tagline}</em>
         <div className="movie-info">
           <Overdrive id={movie.id}>
             <img
@@ -90,7 +109,7 @@ const MovieDetail = ({ match }) => {
               alt={movie.title}
             />
           </Overdrive>
-          <div>
+          <div className='detailed-movie'>
             <h3>Release Date:</h3>
             <p>{movie.release_date ? formatDate(movie.release_date) : 'N/A'}</p>
             <h3>Director:</h3>
@@ -105,17 +124,54 @@ const MovieDetail = ({ match }) => {
                 ? movie.genres.map(genre => genre.name).join(', ')
                 : 'No genres available'}
             </p>
-            {trailer && (
-              <a href={trailer} target="_blank" rel="noopener noreferrer" className="button trailer-button">Watch Trailer</a>
+            {trailerKey && (
+              <button onClick={openTrailerModal} className="button trailer-button">Watch Trailer</button>
             )}
           </div>
         </div>
 
         {images.length > 0 && (
-          <div className="image-grid similar-movies gap flex flex-wrap justify-content-center">
-            {images.map((image, index) => (
-              <img key={index} src={`${IMAGE_PATH}${image.file_path}`} alt={`Backdrop ${index + 1}`} className="movie-image" />
-            ))}
+          <div className='similar-movies'>
+            <h2 className='text-center'>Images from {movie.title}:</h2>
+            <div className="image-grid gap flex flex-wrap justify-content-center">
+              {images.map((image, index) => (
+                <img
+                  key={index}
+                  src={`${IMAGE_PATH}${image.file_path}`}
+                  alt={`Backdrop ${index + 1}`}
+                  className="movie-image"
+                  onClick={() => openImageModal(`${BACKDROP_PATH}${image.file_path}`)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedImage && (
+          <div className="modal" onClick={closeImageModal}>
+            <div className='modal-body'>
+              <span className="close">&times;</span>
+              <img className="modal-content" src={selectedImage} alt="Selected" />
+            </div>
+          </div>
+        )}
+
+        {isTrailerModalOpen && (
+          <div className="modal" onClick={closeTrailerModal}>
+            <div className='modal-body' onClick={e => e.stopPropagation()}>
+              <span className="close" onClick={closeTrailerModal}>&times;</span>
+              <div className="video-responsive">
+                <iframe
+                  title="Trailer"
+                  width="560"
+                  height="315"
+                  src={`https://www.youtube.com/embed/${trailerKey}`}
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
           </div>
         )}
 
@@ -126,21 +182,21 @@ const MovieDetail = ({ match }) => {
               {similarMovies.map(movie => (
                 <div key={movie.id} className="single-card">
                   <Link to={`/${movie.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div className="movie-card">
-                          <div className="movie-details">
-                          <img
-                            className="card-img"
-                            src={`${BACKDROP_PATH}${movie.backdrop_path}`}
-                            alt={movie.title}
-                          />
-                            <h2 className="title">{movie.title}</h2>
-                            <p className="description">
-                              {movie.overview.length > 100 ? movie.overview.substring(0, 100) + '...' : movie.overview}
-                            </p>
-                            <p className='read-more'>Read More</p>
-                          </div>
-                        </div>
-                      </Link>
+                    <div className="movie-card">
+                      <div className="movie-details">
+                        <img
+                          className="card-img"
+                          src={`${BACKDROP_PATH}${movie.backdrop_path}`}
+                          alt={movie.title}
+                        />
+                        <h2 className="title">{movie.title}</h2>
+                        <p className="description">
+                          {movie.overview.length > 100 ? movie.overview.substring(0, 100) + '...' : movie.overview}
+                        </p>
+                        <p className='read-more'>Read More</p>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
               ))}
             </div>

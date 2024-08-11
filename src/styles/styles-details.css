@@ -13,6 +13,10 @@
       padding-bottom: 15rem;
     }
   }
+
+  .detailed-movie{
+    padding: 0rem 1rem;
+  }
   
   @media (max-width: 600px) {
     .movie-wrapper {
@@ -23,7 +27,12 @@
     .movie-info .poster{
       display: none;
     }
+    .detailed-movie{
+      padding: 0rem;
+    }
   }
+
+
   
   .movie-info {
     background: white;
@@ -49,7 +58,7 @@
   
   .movie-info .poster {
     position: relative;
-    max-height: 25rem;
+    max-height: 30rem;
   }
 
 .movie-image{
@@ -103,3 +112,7 @@
       width: 100%;
     }
   }
+
+  .movie-image{
+    cursor: pointer
+}
