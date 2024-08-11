@@ -60,6 +60,19 @@ const MoviesList = () => {
     fetchMovies(nextPage); // Load additional results
   };
 
+  // Handle "Enter" key press
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalResults / 20); // Assume 20 results per page
+
+  // Determine if "Show More" button should be shown
+  const shouldShowMoreButton = movies.length > 0 && page < totalPages;
+
   return (
     <>
       <div className='search-contain'>
@@ -68,6 +81,7 @@ const MoviesList = () => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Search for movies"
         />
         <button 
@@ -89,7 +103,7 @@ const MoviesList = () => {
             !isLoading && !error && <p className='no-movies-found'>Try searching a movie title.</p>
           )}
         </div>
-        {movies.length > 0 && movies.length < totalResults && (
+        {shouldShowMoreButton && (
           <div className="show-more-parent flex justify-content-center">
             <button className='show-more-button button' onClick={handleShowMore}>
               Show More

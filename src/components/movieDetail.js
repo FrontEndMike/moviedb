@@ -7,6 +7,7 @@ import '../styles/styles-details.css';
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280';
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w342';
 const IMAGE_PATH = 'http://image.tmdb.org/t/p/w200';
+const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
 
 const MovieDetail = ({ match }) => {
   const [movie, setMovie] = useState({});
@@ -20,7 +21,7 @@ const MovieDetail = ({ match }) => {
   useEffect(() => {
     const fetchMovie = async () => {
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}?api_key=a62fd138fc3adf6aa51790c63f1f498e&language=en-US`);
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}?api_key=${API_KEY}&language=en-US`);
         const movie = await res.json();
         setMovie(movie);
       } catch (e) {
@@ -30,7 +31,7 @@ const MovieDetail = ({ match }) => {
 
     const fetchImages = async () => {
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/images?api_key=a62fd138fc3adf6aa51790c63f1f498e`);
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/images?api_key=${API_KEY}`);
         const data = await res.json();
         setImages(data.backdrops.slice(0, 8));
       } catch (e) {
@@ -40,7 +41,7 @@ const MovieDetail = ({ match }) => {
 
     const fetchCredits = async () => {
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/credits?api_key=a62fd138fc3adf6aa51790c63f1f498e`);
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/credits?api_key=${API_KEY}`);
         const data = await res.json();
         const director = data.crew.find(person => person.job === 'Director');
         setDirector(director ? director.name : 'N/A');
@@ -51,7 +52,7 @@ const MovieDetail = ({ match }) => {
 
     const fetchVideos = async () => {
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/videos?api_key=a62fd138fc3adf6aa51790c63f1f498e`);
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/videos?api_key=${API_KEY}`);
         const data = await res.json();
         const trailerVideo = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
         setTrailerKey(trailerVideo ? trailerVideo.key : null);
@@ -62,7 +63,7 @@ const MovieDetail = ({ match }) => {
 
     const fetchSimilarMovies = async () => {
       try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/similar?api_key=a62fd138fc3adf6aa51790c63f1f498e&language=en-US`);
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/similar?api_key=${API_KEY}&language=en-US`);
         const data = await res.json();
         const filteredMovies = data.results.filter(movie => movie.backdrop_path); // Only include movies with backdrop path
         setSimilarMovies(filteredMovies.slice(0, 3)); // Limit to 3 similar movies
