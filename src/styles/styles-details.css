@@ -69,6 +69,9 @@
     .movie-info {
       padding: 1rem;
     }
+    .movie-image{
+      max-width: 47%;
+    }
   }
   
   @media (max-width: 600px) {
