@@ -73,7 +73,6 @@ const MoviesList = ({ favorites, onToggleFavorite, isFavorite }) => {
     }
   };
 
-  console.log("Current favorites in MoviesList:", favorites);
 
   const totalPages = Math.ceil(totalResults / 20);
   const shouldShowMoreButton = movies.length > 0 && page < totalPages;

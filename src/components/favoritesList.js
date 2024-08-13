@@ -4,7 +4,6 @@ import Movie from './movies';
 import { Link } from 'react-router-dom';
 
 const FavoritesPage = ({ favorites, onToggleFavorite }) => {
-    console.log("Favorites in FavoritesPage:", favorites); // Debugging
 
     return (
         <div className="favorites-page">

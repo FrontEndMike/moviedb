@@ -28,7 +28,6 @@ const Movie = ({ movie, onToggleFavorite, isFavorite }) => {
                 onClick={(e) => {
                   e.preventDefault(); // Prevent navigation to movie detail
                   onToggleFavorite(movie); // Correctly toggle favorite
-                  console.log("Favorited")
                 }}
                 width="30px"
                 height="30px"
