@@ -99,7 +99,7 @@ const MoviesList = ({ favorites, onToggleFavorite, isFavorite }) => {
       {isLoading && <p className='loading'>Loading...</p>}
       {error && <p className='loading'>{error}</p>}
       <div className='container'>
-        <div className='justify-content-center flex flex-wrap'>
+        <div className='flex flex-wrap'>
           {movies.length > 0 ? (
             movies.map((movie) => (
               <Movie 

@@ -7,7 +7,7 @@ html {
 }
 
 .App{
-  margin-top: 8rem;
+  margin-top: 85px;
 }
 body {
   font-family: 'Montserrat', sans-serif;
@@ -30,7 +30,7 @@ body {
   
  .search-header {
   background-color: black;
-  padding: 1rem;
+  padding: 1rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -41,29 +41,56 @@ body {
   transition: ease all 2s;
 }
 
-.search-header .scroll p{
+.search-header.scroll p{
+  opacity: 0;
+  display: none;
+  transition: ease all 1s;
+}
+
+.search-header.scroll h1{
+  font-size: 1.5rem;
+  transition: ease all 1s;
+}
+
+.search-header.scroll img {
+  opacity: 0;
+  display: none;
+  transition: ease all 1s;
+}
+
+.mobile{
   display: none;
 }
 
-.search-header .scroll h1{
-  font-size: 1.5rem;
+.logo-fav{
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: row;
+  display: flex;
 }
 
-.search-header .scroll img {
-  max-width: 2rem;
-}
+
+
 
 
 @media screen and (max-width: 768px) {
+  .header-search{
+    display: none;
+  }
+  .App{
+    margin-top: 60px;
+  }
+  .search-header p{
+    display: none;
+  }
   .search-header h1{ 
-    font-size: 2rem;
+    font-size: 1.5rem;
     text-align: center;
   } 
   .search-header img{ 
     display: none;
   }  
   .search-header{ 
-    justify-content: center;
     display: flex;
   }
   .logo{
@@ -84,6 +111,7 @@ body {
 
 .search-header h1,p{
   margin: 0;
+  transition: ease all 1s;
 }
 
 .search-header a{
@@ -144,4 +172,8 @@ body {
       transition: ease all .2s;
       box-shadow: none;
     }
+}
+
+.header-search{
+  display: none;
 }

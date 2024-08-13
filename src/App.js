@@ -1,7 +1,6 @@
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable import/no-named-as-default-member */
-import React, { useState } from 'react';
-import { Route, HashRouter, Switch, Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Route, HashRouter, Switch, Link, useHistory } from 'react-router-dom';
+import debounce from 'lodash.debounce';
 import './App.css';
 import './styles/styles-details.css';
 import './styles/styles.css';
@@ -14,6 +13,16 @@ import FavoritesPage from './components/favoritesList';
 
 const App = () => {
   const [favorites, setFavorites] = useState([]);
+  const [headerClass, setHeaderClass] = useState('');
+  const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const history = useHistory();  // Get the history object from React Router
+
+  const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
+  const API_URL = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=`;
 
   const handleToggleFavorite = (movie) => {
     setFavorites(prevFavorites => {
@@ -32,19 +41,93 @@ const App = () => {
     return result;
   };
 
+  const fetchMovies = async (query) => {
+    if (!query) return;
+
+    setIsLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${API_URL}${encodeURIComponent(query)}&page=1`);
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+
+      const filteredMovies = data.results.filter(movie => movie.backdrop_path && movie.poster_path);
+      setSearchResults(filteredMovies);
+    } catch (error) {
+      setError('Error fetching movies. Please try again.');
+      console.error('Error fetching movies:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const debouncedFetchMovies = useCallback(
+    debounce((query) => fetchMovies(query), 500),
+    []
+  );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 36) {
+        setHeaderClass('scroll');
+      } else {
+        setHeaderClass('');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (query) {
+      debouncedFetchMovies(query);
+    } else {
+      setSearchResults([]);
+    }
+  }, [query, debouncedFetchMovies]);
+
+  const handleSearch = () => {
+    fetchMovies(query);
+    history.push('/');  // Navigate back to the root page after a search
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <HashRouter basename='/'>
       <div className="App">
-        <header className="search-header">
+        <header className={`search-header  ${headerClass}`}>
           <Link to="/">
             <div className='logo'>
-              <img src="./images/mike-kaws.jpg" alt="Mike at the Kaws exhibit" />
               <div>
                 <h1>Searchflix</h1>
                 <p>A Movie search engine created by @FrontEndMike</p>
               </div>
             </div>
           </Link>
+          {headerClass && (
+            <div className='header-search'>
+              <input
+                className='search-bar'
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search for movies"
+              />
+              <button 
+                className='button'
+                onClick={handleSearch} 
+              >
+                Search
+              </button>
+            </div>
+          )}
           <Link to="/favorites">
             <div className='flex favorites-icon'>
               <svg
@@ -61,7 +144,6 @@ const App = () => {
                     strokeWidth="1"
                   />
                 </svg>
-
             </div>
           </Link>
         </header>
@@ -81,6 +163,20 @@ const App = () => {
           )} />
           <Route path="/:id" component={MovieDetail} />
         </Switch>
+        {searchResults.length > 0 && (
+          <div className='search-results'>
+            {searchResults.map((movie) => (
+              <div key={movie.id} className='search-result-item'>
+                <Link to={`/${movie.id}`}>
+                  <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} />
+                  <p>{movie.title}</p>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+        {isLoading && <p className='loading'>Loading...</p>}
+        {error && <p className='loading'>{error}</p>}
       </div>
     </HashRouter>
   );
