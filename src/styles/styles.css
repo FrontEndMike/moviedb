@@ -1,4 +1,14 @@
 /* styles/styles.css */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.App{
+  margin-top: 8rem;
+}
 body {
   font-family: 'Montserrat', sans-serif;
   margin: 0;
@@ -18,10 +28,32 @@ body {
   font-family: 'Montserrat', sans-serif;
  }
   
-.search-header{
+ .search-header {
   background-color: black;
-  padding: 2rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 3;
+  transition: ease all 2s;
 }
+
+.search-header .scroll p{
+  display: none;
+}
+
+.search-header .scroll h1{
+  font-size: 1.5rem;
+}
+
+.search-header .scroll img {
+  max-width: 2rem;
+}
+
+
 @media screen and (max-width: 768px) {
   .search-header h1{ 
     font-size: 2rem;

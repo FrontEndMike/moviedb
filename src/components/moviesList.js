@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Movie from './movies';
+import debounce from 'lodash.debounce';
 
-const MoviesList = () => {
+const MoviesList = ({ favorites, onToggleFavorite, isFavorite }) => {
   const [movies, setMovies] = useState([]);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [page, setPage] = useState(1); // Track the current page
-  const [totalResults, setTotalResults] = useState(0); // Track the total number of results
+  const [page, setPage] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
 
   const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
   const API_URL = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=`;
 
-  // Function to fetch movies based on the search query and page number
   const fetchMovies = async (newPage = 1, isInitialSearch = false) => {
-    if (!query) return; // Return early if the query is empty
+    if (!query) return; // Avoid fetching if there's no query
 
     setIsLoading(true);
     setError('');
@@ -22,23 +23,17 @@ const MoviesList = () => {
       const res = await fetch(`${API_URL}${encodeURIComponent(query)}&page=${newPage}`);
       if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
-      
-      // Filter out movies without a poster_path
+
       let filteredMovies = data.results.filter(movie => movie.backdrop_path && movie.poster_path);
 
-      // If it's the initial search, return only 6 results
       if (isInitialSearch) {
-        filteredMovies = filteredMovies.slice(0, 6);
-      }
-
-      // If this is the first page or initial search, replace the movies, otherwise append them
-      if (newPage === 1 || isInitialSearch) {
-        setMovies(filteredMovies);
+        filteredMovies = filteredMovies.slice(0, 6); // Initial search limit
+        setMovies(filteredMovies); // Set movies for the first search
       } else {
-        setMovies(prevMovies => [...prevMovies, ...filteredMovies]);
+        setMovies(prevMovies => [...prevMovies, ...filteredMovies]); // Append movies for subsequent pages
       }
 
-      setTotalResults(data.total_results); // Update the total results count
+      setTotalResults(data.total_results);
     } catch (error) {
       setError('Error fetching movies. Please try again.');
       console.error('Error fetching movies:', error);
@@ -47,30 +42,40 @@ const MoviesList = () => {
     }
   };
 
-  // Handle search button click
+  // Create a debounced version of the fetchMovies function
+  const debouncedFetchMovies = useCallback(
+    debounce((query, isInitialSearch) => fetchMovies(1, isInitialSearch), 500),
+    []
+  );
+
+  useEffect(() => {
+    if (query) {
+      debouncedFetchMovies(query, true);
+    } else {
+      setMovies([]); // Clear movies if the query is empty
+    }
+  }, [query, debouncedFetchMovies]);
+
   const handleSearch = () => {
-    setPage(1); // Reset to the first page
-    fetchMovies(1, true); // Initial search fetches only 6 results
+    setPage(1); // Reset page to 1 for new search
+    fetchMovies(1, true); // Perform initial search
   };
 
-  // Handle "Show More" button click
   const handleShowMore = () => {
     const nextPage = page + 1;
-    setPage(nextPage);
-    fetchMovies(nextPage); // Load additional results
+    setPage(nextPage); // Increment page number
+    fetchMovies(nextPage); // Fetch movies for the next page
   };
 
-  // Handle "Enter" key press
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
 
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(totalResults / 20); // Assume 20 results per page
+  console.log("Current favorites in MoviesList:", favorites);
 
-  // Determine if "Show More" button should be shown
+  const totalPages = Math.ceil(totalResults / 20);
   const shouldShowMoreButton = movies.length > 0 && page < totalPages;
 
   return (
@@ -97,7 +102,12 @@ const MoviesList = () => {
         <div className='justify-content-center flex flex-wrap'>
           {movies.length > 0 ? (
             movies.map((movie) => (
-              <Movie key={movie.id} movie={movie} />
+              <Movie 
+                key={movie.id} 
+                movie={movie}
+                onToggleFavorite={onToggleFavorite} // Pass the function as a prop
+                isFavorite={isFavorite(movie)} // Pass the result of the function as a prop
+              />
             ))
           ) : (
             !isLoading && !error && <p className='no-movies-found'>Try searching a movie title.</p>
@@ -113,6 +123,19 @@ const MoviesList = () => {
       </div>
     </>
   );
+};
+
+MoviesList.propTypes = {
+  favorites: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      overview: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
+      backdrop_path: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onToggleFavorite: PropTypes.func.isRequired,
+  isFavorite: PropTypes.func.isRequired,
 };
 
 export default MoviesList;

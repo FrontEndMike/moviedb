@@ -54,5 +54,37 @@
 .title{
     margin-top: 0;
 }
+
+.card-icons{
+    align-items: center;
+    margin-top: 1rem;
+    justify-content: space-between;
+}
+.card-icons .read-more{
+    margin-top: 0;
+}
+
+
+
+
+
+.favorite-heart {
+    fill: white;
+    stroke: black; 
+    transition: fill 0.3s ease;
+  }
   
+  .favorite-heart.active {
+    fill: red;
+    stroke: red;
+    transition: fill 0.3s ease;
+  }
   
+
+  .favorites-page{
+      padding-top: 2rem;
+  }
+  
+  .full-width{
+      width: 100%;
+  }
