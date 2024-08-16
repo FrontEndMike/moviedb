@@ -7,6 +7,7 @@ import '../styles/styles-details.css';
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280';
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w342';
 const IMAGE_PATH = 'http://image.tmdb.org/t/p/w200';
+const PROFILE_PATH = 'http://image.tmdb.org/t/p/w185';
 const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
 
 const MovieDetail = ({ match }) => {
@@ -14,10 +15,13 @@ const MovieDetail = ({ match }) => {
   const [images, setImages] = useState([]);
   const [trailerKey, setTrailerKey] = useState(null);
   const [director, setDirector] = useState('');
+  const [cast, setCast] = useState([]); 
   const [similarMovies, setSimilarMovies] = useState([]);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null); // Track index of the selected image
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [streamingProviders, setStreamingProviders] = useState([]);
+
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -46,6 +50,10 @@ const MovieDetail = ({ match }) => {
         const data = await res.json();
         const director = data.crew.find(person => person.job === 'Director');
         setDirector(director ? director.name : 'N/A');
+
+        // Filter and set cast members with profile images
+        const castWithImages = data.cast.filter(member => member.profile_path);
+        setCast(castWithImages.slice(0, 5));
       } catch (e) {
         console.log(e);
       }
@@ -73,11 +81,25 @@ const MovieDetail = ({ match }) => {
       }
     };
 
+
+      const fetchStreamingProviders = async () => {
+        try {
+          const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/watch/providers?api_key=${API_KEY}`);
+          const data = await res.json();
+          if (data.results.US && data.results.US.flatrate) {
+            setStreamingProviders(data.results.US.flatrate); // assuming you're interested in US providers
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      };
+
     fetchMovie();
     fetchImages();
     fetchCredits();
     fetchVideos();
     fetchSimilarMovies();
+    fetchStreamingProviders();
   }, [match.params.id]);
 
   useEffect(() => {
@@ -94,13 +116,13 @@ const MovieDetail = ({ match }) => {
   };
 
   const showPreviousImage = (e) => {
-    e.stopPropagation(); // Prevent event from bubbling up
-    setSelectedImageIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : images.length - 1)); // Cycles through the image array with prevIndex being the current image position
+    e.stopPropagation();
+    setSelectedImageIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : images.length - 1));
   };
 
   const showNextImage = (e) => {
-    e.stopPropagation(); // Prevent event from bubbling up
-    setSelectedImageIndex(prevIndex => (prevIndex < images.length - 1 ? prevIndex + 1 : 0)); // Cycles through the image array with prevIndex being the current image position
+    e.stopPropagation();
+    setSelectedImageIndex(prevIndex => (prevIndex < images.length - 1 ? prevIndex + 1 : 0));
   };
 
   const currentImage = images[selectedImageIndex];
@@ -135,11 +157,56 @@ const MovieDetail = ({ match }) => {
                 ? movie.genres.map(genre => genre.name).join(', ')
                 : 'No genres available'}
             </p>
+              {streamingProviders.length > 0 ? (
+                <>
+                  <h3>Watch on:</h3>
+                  <div className="gap streaming-providers">
+                    {streamingProviders.map((provider, index) => (
+                      <div key={index}>
+                        <a className="movie-card stream-card" href={`https://www.${provider.provider_name.toLowerCase().replace(' ', '')}.com`} target="_blank" rel="noopener noreferrer">
+                          <img
+                              src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+                              alt={provider.provider_name}
+                              className="provider-logo"
+                            />
+                          {provider.provider_name}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3>Watch on:</h3>
+                  <p>Not currently streaming.</p>
+                </>
+              )}
             {trailerKey && (
               <button onClick={() => setIsTrailerModalOpen(true)} className="button trailer-button">Watch Trailer</button>
             )}
           </div>
         </div>
+
+        {cast.length > 0 && (
+          <div className="cast-section similar-movies">
+            <h2 className='text-center'>Cast:</h2>
+            <div className="image-grid gap flex flex-wrap justify-content-center">
+              {cast.map((member, index) => (
+                <div key={index} className="cast-member">
+                  <div className='cast-contain'>
+                    <img
+                      src={`${PROFILE_PATH}${member.profile_path}`}
+                      alt={member.name}
+                      className="cast-image"
+                    />
+                  </div>
+                  <p className="cast-name">{member.name}</p>
+                  <p className="cast-character">{member.character}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {images.length > 0 && (
           <div className='similar-movies'>
