@@ -96,6 +96,10 @@
   .movie-info h3 {
     font-weight: 600;
     margin-bottom: 0.25rem;
+    margin-top: 0;
+  }
+  .movie-info p {
+    margin-bottom: 1rem;
   }
 
   .gap{
@@ -144,13 +148,9 @@
 
 .cast-member {
   text-align: center;
-  max-width: 155px;
+  max-width: 130px;
 }
-@media (max-width: 768px) {
-  .cast-member {
-    max-width: 100%;
-  }
-}
+
 
 .cast-image {
   width: 100%;
@@ -183,9 +183,11 @@
   margin-bottom: 0;
   padding: 5px 20px 5px 5px;
   color: black;
+  border: 1px solid gray;
 }
  .stream-card.movie-card:hover {
     transform: none;
+    box-shadow: none;
   }
 
 .streaming-providers{

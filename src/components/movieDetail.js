@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Overdrive from 'react-overdrive';
 import { Link } from 'react-router-dom';
 import formatDate from './formatDate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShareAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import '../styles/styles-details.css';
 
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280';
@@ -106,6 +109,27 @@ const MovieDetail = ({ match }) => {
     window.scrollTo(0, 0);
   }, [movie.id]);
 
+    const handleShare = () => {
+    const url = window.location.href;
+    const text = `Check out this movie: ${movie.title}`;
+    if (navigator.share) {
+      navigator.share({
+        title: movie.title,
+        text,
+        url,
+      }).catch(console.error);
+    } else {
+      // Fallback for unsupported browsers
+      alert("Your browser doesn't support the Web Share API.");
+    }
+  };
+
+  const shareOnTwitter = () => {
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this movie: ${movie.title}`)}`;
+    window.open(url, '_blank');
+  };
+
+
   const openImageModal = (index) => {
     setSelectedImageIndex(index);
     setIsImageModalOpen(true);
@@ -132,7 +156,12 @@ const MovieDetail = ({ match }) => {
       <div className="movie-wrapper" style={{ backgroundImage: `url(${BACKDROP_PATH}${movie.backdrop_path})` }}>
       </div>
       <div className='container relative'>
-        <h1 className='movie-title text-center'>{movie.title}</h1>
+        <h1 className='movie-title text-center'>
+          {movie.title}
+           {/* <button onClick={handleShare} className="share-button">
+            <FontAwesomeIcon icon={faShareAlt} />
+          </button> */}
+        </h1>
         <em className='block text-center'>{movie.tagline}</em>
         <div className="movie-info">
           <Overdrive id={movie.id}>
@@ -174,6 +203,11 @@ const MovieDetail = ({ match }) => {
                       </div>
                     ))}
                   </div>
+                  {/* <div className="share-options">
+                    <button onClick={shareOnTwitter} className="share-option">
+                      <FontAwesomeIcon icon={faTwitter} /> Twitter
+                    </button>
+                  </div> */}
                 </>
               ) : (
                 <>
