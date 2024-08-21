@@ -5,7 +5,6 @@ import formatDate from './formatDate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShareAlt } from '@fortawesome/free-solid-svg-icons';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons';
-import '../styles/styles-details.css';
 
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280';
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w342';

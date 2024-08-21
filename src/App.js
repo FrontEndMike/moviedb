@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Route, HashRouter, Switch, Link, useHistory } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import './App.css';
-import './styles/styles-details.css';
+import './styles/styles-details-2.css';
 import './styles/styles.css';
 import './styles/search.css';
 import './styles/movie-card.css';
