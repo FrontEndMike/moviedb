@@ -191,7 +191,7 @@ const MovieDetail = ({ match }) => {
                   <h3>Watch on:</h3>
                   <div className="gap streaming-providers">
                     {streamingProviders.map((provider, index) => (
-                      <div key={index}>
+                      <div className="stream-contain" key={index}>
                         <a className="movie-card stream-card" href={`https://www.${provider.provider_name.toLowerCase().replace(' ', '')}.com`} target="_blank" rel="noopener noreferrer">
                           <img
                               src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
