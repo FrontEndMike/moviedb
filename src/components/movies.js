@@ -4,10 +4,14 @@ import { Link } from 'react-router-dom';
 
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w780';
 
-const Movie = ({ movie, onToggleFavorite, isFavorite }) => {
+const Movie = ({ movie, onToggleFavorite, isFavorite, onClick }) => {
   return (
     <div className='single-card'>
-      <Link to={`/${movie.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <Link 
+        to={`/${movie.id}`} 
+        style={{ textDecoration: 'none', color: 'inherit' }}
+        onClick={onClick} 
+      >
         <div className="movie-card">
           <div className="movie-details">
             <img

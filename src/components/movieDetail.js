@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Overdrive from 'react-overdrive';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import formatDate from './formatDate';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShareAlt } from '@fortawesome/free-solid-svg-icons';
-import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280';
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w342';
@@ -13,6 +10,9 @@ const PROFILE_PATH = 'http://image.tmdb.org/t/p/w185';
 const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
 
 const MovieDetail = ({ match }) => {
+  const location = useLocation();
+  const { query = '', page = 1 } = location.state || {}; // Use defaults if state is undefined
+
   const [movie, setMovie] = useState({});
   const [images, setImages] = useState([]);
   const [trailerKey, setTrailerKey] = useState(null);
@@ -25,6 +25,7 @@ const MovieDetail = ({ match }) => {
   const [streamingProviders, setStreamingProviders] = useState([]);
 
 
+  
   useEffect(() => {
     const fetchMovie = async () => {
       try {
@@ -83,18 +84,17 @@ const MovieDetail = ({ match }) => {
       }
     };
 
-
-      const fetchStreamingProviders = async () => {
-        try {
-          const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/watch/providers?api_key=${API_KEY}`);
-          const data = await res.json();
-          if (data.results.US && data.results.US.flatrate) {
-            setStreamingProviders(data.results.US.flatrate); // assuming you're interested in US providers
-          }
-        } catch (e) {
-          console.log(e);
+    const fetchStreamingProviders = async () => {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/watch/providers?api_key=${API_KEY}`);
+        const data = await res.json();
+        if (data.results.US && data.results.US.flatrate) {
+          setStreamingProviders(data.results.US.flatrate);
         }
-      };
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
     fetchMovie();
     fetchImages();
@@ -108,7 +108,7 @@ const MovieDetail = ({ match }) => {
     window.scrollTo(0, 0);
   }, [movie.id]);
 
-    const handleShare = () => {
+  const handleShare = () => {
     const url = window.location.href;
     const text = `Check out this movie: ${movie.title}`;
     if (navigator.share) {
@@ -118,7 +118,6 @@ const MovieDetail = ({ match }) => {
         url,
       }).catch(console.error);
     } else {
-      // Fallback for unsupported browsers
       alert("Your browser doesn't support the Web Share API.");
     }
   };
@@ -127,7 +126,6 @@ const MovieDetail = ({ match }) => {
     const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this movie: ${movie.title}`)}`;
     window.open(url, '_blank');
   };
-
 
   const openImageModal = (index) => {
     setSelectedImageIndex(index);
@@ -157,9 +155,6 @@ const MovieDetail = ({ match }) => {
       <div className='container relative'>
         <h1 className='movie-title text-center'>
           {movie.title}
-           {/* <button onClick={handleShare} className="share-button">
-            <FontAwesomeIcon icon={faShareAlt} />
-          </button> */}
         </h1>
         <em className='block text-center'>{movie.tagline}</em>
         <div className="movie-info">
@@ -202,11 +197,6 @@ const MovieDetail = ({ match }) => {
                       </div>
                     ))}
                   </div>
-                  {/* <div className="share-options">
-                    <button onClick={shareOnTwitter} className="share-option">
-                      <FontAwesomeIcon icon={faTwitter} /> Twitter
-                    </button>
-                  </div> */}
                 </>
               ) : (
                 <>
@@ -250,41 +240,21 @@ const MovieDetail = ({ match }) => {
                   key={index}
                   src={`${IMAGE_PATH}${image.file_path}`}
                   alt={`Backdrop ${index + 1}`}
-                  className="movie-image"
                   onClick={() => openImageModal(index)}
                 />
               ))}
             </div>
           </div>
         )}
-
-        {isImageModalOpen && currentImage && (
-          <div className="modal" onClick={closeImageModal}>
-            <div className='modal-body'>
-              <span className="close" onClick={closeImageModal}>&times;</span>
-              <button className="button nav-button left" onClick={showPreviousImage}>❮</button>
-              <img className="modal-image" src={`${BACKDROP_PATH}${currentImage.file_path}`} alt="Selected" />
-              <button className="button nav-button right" onClick={showNextImage}>❯</button>
-            </div>
-          </div>
-        )}
-
-        {isTrailerModalOpen && (
-          <div className="modal" onClick={() => setIsTrailerModalOpen(false)}>
-            <div className='modal-body' onClick={e => e.stopPropagation()}>
-              <span className="close" onClick={() => setIsTrailerModalOpen(false)}>&times;</span>
-              <div className="video-responsive">
-                <iframe
-                  title="Trailer"
-                  width="560"
-                  height="315"
-                  src={`https://www.youtube.com/embed/${trailerKey}`}
-                  frameBorder="0"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
+        {isImageModalOpen && selectedImageIndex !== null && (
+          <div className="image-modal" onClick={closeImageModal}>
+            <button className="prev-button" onClick={showPreviousImage}>&lt;</button>
+            <img
+              src={`${IMAGE_PATH}${currentImage.file_path}`}
+              alt={`Backdrop ${selectedImageIndex + 1}`}
+              onClick={e => e.stopPropagation()} 
+            />
+            <button className="next-button" onClick={showNextImage}>&gt;</button>
           </div>
         )}
 
@@ -316,8 +286,29 @@ const MovieDetail = ({ match }) => {
           </div>
         )}
 
+        {/* <div className="share-buttons">
+          <button onClick={handleShare}>Share</button>
+          <button onClick={shareOnTwitter}>Share on Twitter</button>
+        </div> */}
+
+        {isTrailerModalOpen && trailerKey && (
+          <div className="trailer-modal">
+            <div className="trailer-container">
+              <button onClick={() => setIsTrailerModalOpen(false)} className="trailer-close">&times;</button>
+              <iframe
+                title="movie-trailer"
+                width="100%"
+                height="400px"
+                src={`https://www.youtube.com/embed/${trailerKey}`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
         <div className='back-parent flex justify-content-center'>
-          <Link to={`/`} className="button">Back to Home</Link>
+          <Link to={`/?query=${query}&page=${page}`}  className="button">Back to Movies</Link>
         </div>
       </div>
     </>
