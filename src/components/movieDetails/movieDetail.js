@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import Overdrive from 'react-overdrive';
 import { Link, useLocation } from 'react-router-dom';
-import formatDate from './formatDate';
+import Overdrive from 'react-overdrive';
+import formatDate from '../formatDate';
+import {
+  fetchMovie,
+  fetchImages,
+  fetchCredits,
+  fetchVideos,
+  fetchSimilarMovies,
+  fetchStreamingProviders
+} from './api';
+import {
+  openModal,
+  closeModal,
+  showNextImage,
+  showPreviousImage
+} from './MovieDetailUtils';
 
 const BACKDROP_PATH = 'http://image.tmdb.org/t/p/w1280';
 const POSTER_PATH = 'http://image.tmdb.org/t/p/w342';
 const IMAGE_PATH = 'http://image.tmdb.org/t/p/w200';
 const PROFILE_PATH = 'http://image.tmdb.org/t/p/w185';
-const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
 
 const MovieDetail = ({ match }) => {
   const location = useLocation();
@@ -31,81 +44,35 @@ const MovieDetail = ({ match }) => {
     if (query) localStorage.setItem('query', query);
     if (page) localStorage.setItem('page', page);
 
-    const fetchMovie = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}?api_key=${API_KEY}&language=en-US`);
-        const movie = await res.json();
-        setMovie(movie);
-      } catch (e) {
-        console.log(e);
+    const fetchData = async () => {
+      const movieData = await fetchMovie(match.params.id);
+      setMovie(movieData);
+
+      const imagesData = await fetchImages(match.params.id);
+      setImages(imagesData.backdrops.slice(0, 8));
+
+      const creditsData = await fetchCredits(match.params.id);
+      const director = creditsData.crew.find(person => person.job === 'Director');
+      setDirector(director ? director.name : 'N/A');
+
+      const castWithImages = creditsData.cast.filter(member => member.profile_path);
+      setCast(castWithImages.slice(0, 5));
+
+      const videosData = await fetchVideos(match.params.id);
+      const trailerVideo = videosData.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+      setTrailerKey(trailerVideo ? trailerVideo.key : null);
+
+      const similarMoviesData = await fetchSimilarMovies(match.params.id);
+      const filteredMovies = similarMoviesData.results.filter(movie => movie.backdrop_path);
+      setSimilarMovies(filteredMovies.slice(0, 3));
+
+      const streamingProvidersData = await fetchStreamingProviders(match.params.id);
+      if (streamingProvidersData.results.US && streamingProvidersData.results.US.flatrate) {
+        setStreamingProviders(streamingProvidersData.results.US.flatrate);
       }
     };
 
-    const fetchImages = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/images?api_key=${API_KEY}`);
-        const data = await res.json();
-        setImages(data.backdrops.slice(0, 8));
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchCredits = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/credits?api_key=${API_KEY}`);
-        const data = await res.json();
-        const director = data.crew.find(person => person.job === 'Director');
-        setDirector(director ? director.name : 'N/A');
-
-        // Filter and set cast members with profile images
-        const castWithImages = data.cast.filter(member => member.profile_path);
-        setCast(castWithImages.slice(0, 5));
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchVideos = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/videos?api_key=${API_KEY}`);
-        const data = await res.json();
-        const trailerVideo = data.results.find(video => video.type === 'Trailer' && video.site === 'YouTube');
-        setTrailerKey(trailerVideo ? trailerVideo.key : null);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchSimilarMovies = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/similar?api_key=${API_KEY}&language=en-US`);
-        const data = await res.json();
-        const filteredMovies = data.results.filter(movie => movie.backdrop_path);
-        setSimilarMovies(filteredMovies.slice(0, 3));
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    const fetchStreamingProviders = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}/watch/providers?api_key=${API_KEY}`);
-        const data = await res.json();
-        if (data.results.US && data.results.US.flatrate) {
-          setStreamingProviders(data.results.US.flatrate);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    fetchMovie();
-    fetchImages();
-    fetchCredits();
-    fetchVideos();
-    fetchSimilarMovies();
-    fetchStreamingProviders();
+    fetchData();
   }, [match.params.id]);
 
   useEffect(() => {
@@ -130,27 +97,6 @@ const MovieDetail = ({ match }) => {
     const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this movie: ${movie.title}`)}`;
     window.open(url, '_blank');
   };
-
-  const openImageModal = (index) => {
-    setSelectedImageIndex(index);
-    setIsImageModalOpen(true);
-  };
-
-  const closeImageModal = () => {
-    setIsImageModalOpen(false);
-  };
-
-  const showPreviousImage = (e) => {
-    e.stopPropagation();
-    setSelectedImageIndex(prevIndex => (prevIndex > 0 ? prevIndex - 1 : images.length - 1));
-  };
-
-  const showNextImage = (e) => {
-    e.stopPropagation();
-    setSelectedImageIndex(prevIndex => (prevIndex < images.length - 1 ? prevIndex + 1 : 0));
-  };
-
-  const currentImage = images[selectedImageIndex];
 
   return (
     <>
@@ -227,7 +173,7 @@ const MovieDetail = ({ match }) => {
                       className="cast-image"
                     />
                   </div>
-                  <p className="cast-name">{member.name}</p>
+                                    <p className="cast-name">{member.name}</p>
                   <p className="cast-character">{member.character}</p>
                 </div>
               ))}
@@ -244,21 +190,21 @@ const MovieDetail = ({ match }) => {
                   key={index}
                   src={`${IMAGE_PATH}${image.file_path}`}
                   alt={`Backdrop ${index + 1}`}
-                  onClick={() => openImageModal(index)}
+                  onClick={() => openModal(index, setSelectedImageIndex, setIsImageModalOpen)}
                 />
               ))}
             </div>
           </div>
         )}
         {isImageModalOpen && selectedImageIndex !== null && (
-          <div className="image-modal" onClick={closeImageModal}>
-            <button className="prev-button" onClick={showPreviousImage}>&lt;</button>
+          <div className="image-modal" onClick={() => closeModal(setIsImageModalOpen)}>
+            <button className="prev-button" onClick={(e) => showPreviousImage(selectedImageIndex, images, setSelectedImageIndex)}>&lt;</button>
             <img
-              src={`${IMAGE_PATH}${currentImage.file_path}`}
+              src={`${IMAGE_PATH}${images[selectedImageIndex].file_path}`}
               alt={`Backdrop ${selectedImageIndex + 1}`}
               onClick={e => e.stopPropagation()} 
             />
-            <button className="next-button" onClick={showNextImage}>&gt;</button>
+            <button className="next-button" onClick={(e) => showNextImage(selectedImageIndex, images, setSelectedImageIndex)}>&gt;</button>
           </div>
         )}
 
@@ -290,11 +236,6 @@ const MovieDetail = ({ match }) => {
           </div>
         )}
 
-        {/* <div className="share-buttons">
-          <button onClick={handleShare}>Share</button>
-          <button onClick={shareOnTwitter}>Share on Twitter</button>
-        </div> */}
-
         {isTrailerModalOpen && trailerKey && (
           <div className="trailer-modal">
             <div className="trailer-container">
@@ -320,3 +261,4 @@ const MovieDetail = ({ match }) => {
 };
 
 export default MovieDetail;
+

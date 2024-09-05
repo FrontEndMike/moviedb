@@ -8,7 +8,7 @@ import './styles/search.css';
 import './styles/movie-card.css';
 import './styles/modal.css';
 import MoviesList from './components/moviesList';
-import MovieDetail from './components/movieDetail';
+import MovieDetail from './components/movieDetails/movieDetail';
 import FavoritesPage from './components/favoritesList';
 
 // Create a QueryClient instance
