@@ -29,8 +29,10 @@ const MoviesList = ({ favorites, onToggleFavorite, isFavorite }) => {
       if (isInitialSearch) {
         filteredMovies = filteredMovies.slice(0, 6); // Initial search limit
         setMovies(filteredMovies); // Set movies for the first search
+        localStorage.setItem('movies', JSON.stringify(filteredMovies)); // Replace movies in localStorage
       } else {
         setMovies(prevMovies => [...prevMovies, ...filteredMovies]); // Append movies for subsequent pages
+        localStorage.setItem('movies', JSON.stringify([...movies, ...filteredMovies])); // Update movies in localStorage
       }
 
       setTotalResults(data.total_results);
@@ -44,35 +46,57 @@ const MoviesList = ({ favorites, onToggleFavorite, isFavorite }) => {
 
   // Create a debounced version of the fetchMovies function
   const debouncedFetchMovies = useCallback(
-    debounce((query, isInitialSearch) => fetchMovies(1, isInitialSearch), 500),
+    debounce((query, page, isInitialSearch) => fetchMovies(page, isInitialSearch), 500),
     []
   );
 
+  // Retrieve query and page from localStorage on mount
   useEffect(() => {
-    if (query) {
-      debouncedFetchMovies(query, true);
+    const storedQuery = localStorage.getItem('query') || '';
+    const storedPage = parseInt(localStorage.getItem('page')) || 1;
+    const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
+
+    setQuery(storedQuery);
+    setPage(storedPage);
+    setMovies(storedMovies); // Restore movies from localStorage
+
+    if (storedQuery) {
+      debouncedFetchMovies(storedQuery, storedPage, true);
     } else {
       setMovies([]); // Clear movies if the query is empty
     }
-  }, [query, debouncedFetchMovies]);
+  }, [debouncedFetchMovies]);
 
+  // Store query and page in localStorage whenever they change
+  useEffect(() => {
+    if (query) {
+      localStorage.setItem('query', query);
+    }
+    if (page) {
+      localStorage.setItem('page', page);
+    }
+  }, [query, page]);
+
+  // Handle search and show more buttons
   const handleSearch = () => {
     setPage(1); // Reset page to 1 for new search
+    localStorage.setItem('page', 1); // Store page reset in localStorage
     fetchMovies(1, true); // Perform initial search
   };
 
   const handleShowMore = () => {
     const nextPage = page + 1;
     setPage(nextPage); // Increment page number
+    localStorage.setItem('page', nextPage); // Store next page in localStorage
     fetchMovies(nextPage); // Fetch movies for the next page
   };
 
+  // Handle key down for search input
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
-
 
   const totalPages = Math.ceil(totalResults / 20);
   const shouldShowMoreButton = movies.length > 0 && page < totalPages;
@@ -102,6 +126,8 @@ const MoviesList = ({ favorites, onToggleFavorite, isFavorite }) => {
           {movies.length > 0 ? (
             movies.map((movie) => (
               <Movie 
+                query={query} 
+                page={page} 
                 key={movie.id} 
                 movie={movie}
                 onToggleFavorite={onToggleFavorite} // Pass the function as a prop

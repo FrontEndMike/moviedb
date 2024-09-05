@@ -11,22 +11,26 @@ const API_KEY = 'a62fd138fc3adf6aa51790c63f1f498e';
 
 const MovieDetail = ({ match }) => {
   const location = useLocation();
-  const { query = '', page = 1 } = location.state || {}; // Use defaults if state is undefined
-
+  const params = new URLSearchParams(location.search);
+  const query = params.get('query');
+  const page = params.get('page');
+  
   const [movie, setMovie] = useState({});
   const [images, setImages] = useState([]);
   const [trailerKey, setTrailerKey] = useState(null);
   const [director, setDirector] = useState('');
-  const [cast, setCast] = useState([]); 
+  const [cast, setCast] = useState([]);
   const [similarMovies, setSimilarMovies] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [streamingProviders, setStreamingProviders] = useState([]);
 
-
-  
   useEffect(() => {
+    // Store query and page in localStorage
+    if (query) localStorage.setItem('query', query);
+    if (page) localStorage.setItem('page', page);
+
     const fetchMovie = async () => {
       try {
         const res = await fetch(`https://api.themoviedb.org/3/movie/${match.params.id}?api_key=${API_KEY}&language=en-US`);
@@ -308,7 +312,7 @@ const MovieDetail = ({ match }) => {
           </div>
         )}
         <div className='back-parent flex justify-content-center'>
-          <Link to={`/?query=${query}&page=${page}`}  className="button">Back to Movies</Link>
+          <Link to="/" className="button">Back to Movies</Link>
         </div>
       </div>
     </>
