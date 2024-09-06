@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Overdrive from 'react-overdrive';
 import formatDate from '../formatDate';
 import {
   fetchMovie,
@@ -108,13 +107,13 @@ const MovieDetail = ({ match }) => {
         </h1>
         <em className='block text-center'>{movie.tagline}</em>
         <div className="movie-info">
-          <Overdrive id={movie.id}>
+          <div id={movie.id}>
             <img
               className="poster"
               src={`${POSTER_PATH}${movie.poster_path}`}
               alt={movie.title}
             />
-          </Overdrive>
+          </div>
           <div className='detailed-movie'>
             <h3>Release Date:</h3>
             <p>{movie.release_date ? formatDate(movie.release_date) : 'N/A'}</p>
