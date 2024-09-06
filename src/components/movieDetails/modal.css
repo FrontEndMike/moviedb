@@ -25,6 +25,7 @@
     max-width: 75rem;
     margin: 0 auto;
     position: relative;
+    top: 10%;
   }
 
   .video-responsive {
@@ -54,16 +55,18 @@
     box-shadow: none;
 }
 
-@media (max-width: 768px){
-    .modal .nav-button{
-        top: 100%;
-    }
-}
+
 
 
 .modal-image{
     max-width: 85%;
     margin: 0 auto;
+}
+
+@media (max-width: 768px){
+  .modal-image{
+      max-width: 70%;
+  }
 }
 
 .modal  .nav-button.left {
@@ -72,4 +75,14 @@
 
 .modal  .nav-button.right {
     right: 1rem;
+}
+
+@media (max-width: 768px){
+  .modal  .nav-button.left {
+      left: 0;
+  }
+
+  .modal  .nav-button.right {
+      right: 0;
+  }
 }

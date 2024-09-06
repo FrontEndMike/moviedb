@@ -1,3 +1,7 @@
+@import './styles/styles.css';
+@import './styles/search.css';
+@import './styles/movie-card.css';
+
 .searchBar{
   padding: 2rem 1rem;
 }
