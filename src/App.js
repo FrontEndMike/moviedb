@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Route, BrowserRouter, Switch, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // Import QueryClient and QueryClientProvider
 import './App.css';
-import './styles/styles.css';
-import './styles/search.css';
-import './styles/movie-card.css';
 import MoviesList from './components/moviesList';
 import MovieDetail from './components/movieDetails/movieDetail';
 import FavoritesPage from './components/favoritesList';
