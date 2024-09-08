@@ -1,0 +1,325 @@
+/*!*******************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/search.css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************/
+.search-contain{
+    max-width: 30rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 2rem auto;
+    padding: 0.5rem;
+    gap: 1rem;
+    padding-top: 4rem;
+}
+
+@media screen and (max-width: 768px) {
+    .search-contain{
+        flex-direction: column;
+        padding: 2rem;
+    } 
+}
+
+
+.search-bar{
+    border-radius: 5px;
+    border: 1px solid black;
+    box-shadow: 0 0 20px 0 #0000001a;
+    padding: 0.5rem;
+    min-width: 20rem;
+    font-size: 16px;
+}
+
+
+
+
+.loading{
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.no-movies-found{
+    margin: 0 auto;
+}
+
+.show-more-button{
+    margin: 2rem auto;
+}
+
+.show-more-parent{
+    padding: 2rem;
+}
+/*!*******************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/styles.css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************/
+/* styles/styles.css */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+.App{
+  margin-top: 85px;
+}
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+ }
+
+ a{
+   text-decoration: none;
+ }
+ 
+ h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  line-height: 1.1;
+ }
+
+ p{
+  font-family: 'Montserrat', sans-serif;
+ }
+  
+ .search-header {
+  background-color: black;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 3;
+  transition: ease all 2s;
+}
+
+.search-header.scroll p{
+  opacity: 0;
+  display: none;
+  transition: ease all 1s;
+}
+
+.search-header.scroll h1{
+  font-size: 1.5rem;
+  transition: ease all 1s;
+}
+
+.search-header.scroll img {
+  opacity: 0;
+  display: none;
+  transition: ease all 1s;
+}
+
+.mobile{
+  display: none;
+}
+
+.logo-fav{
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: row;
+  display: flex;
+}
+
+
+
+
+
+@media screen and (max-width: 768px) {
+  .header-search{
+    display: none;
+  }
+  .App{
+    margin-top: 60px;
+  }
+  .search-header p{
+    display: none;
+  }
+  .search-header h1{ 
+    font-size: 1.5rem;
+    text-align: center;
+  } 
+  .search-header img{ 
+    display: none;
+  }  
+  .search-header{ 
+    display: flex;
+  }
+  .logo{
+    text-align: center;
+  }    
+}
+.logo{
+  display: inline-flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.search-header img{
+  max-width: 4rem;
+  height: auto;
+  width: 100%;
+  max-height: 4rem;
+}
+
+.search-header h1,p{
+  margin: 0;
+  transition: ease all 1s;
+}
+
+.search-header a{
+  color: white;
+  text-decoration: none;
+  display: inline;
+}
+
+  .container {
+    max-width: 1400px;
+    display: block;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+.text-center{
+  text-align: center;
+}
+
+.block{
+  display: block;
+}
+
+.flex{
+  display: flex;
+}
+
+  .flex-wrap{
+    flex-wrap: wrap;
+  }
+
+.justify-content-center{
+  justify-content: center;
+}
+
+.relative{
+  position: relative;
+}
+
+  .button{
+    padding: 0.5rem 2rem;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    letter-spacing: 0.1px;
+    border-radius: 5px;
+    border: 1px solid black;
+    transition: ease all .2s;
+    box-shadow: 0 0 20px 0 #0000001a;
+    font-size: 16px;
+  }
+
+  
+  @media screen and (min-width: 768px) {    
+    .button:hover{
+      background-color: white;
+      color: black;
+      transition: ease all .2s;
+      box-shadow: none;
+    }
+}
+
+.header-search{
+  display: none;
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/movie-card.css ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************/
+.movie-card {
+    display: flex;
+    padding: 1rem;
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+}
+
+.read-more{
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.read-more:after{
+    content: url(/_next/static/media/right-caret.d45db31a.svg);
+    line-height: 0;
+}
+
+.card-img{
+    width: 100%;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    margin-bottom: 1rem;
+}
+
+.single-card {
+    width: 33%;
+    padding: 1rem;
+}
+@media screen and (max-width: 1200px) {
+    .single-card {
+        width: 49%;
+    }
+}
+@media screen and (max-width: 768px) {
+    .single-card {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .movie-card:hover {
+        transform: scale(1.01);
+        transition: transform 0.3s ease;
+    }
+}
+ 
+.title{
+    margin-top: 0;
+}
+
+.card-icons{
+    align-items: center;
+    margin-top: 1rem;
+    justify-content: space-between;
+}
+.card-icons .read-more{
+    margin-top: 0;
+}
+
+
+
+
+
+.favorite-heart {
+    fill: white;
+    stroke: black; 
+    transition: fill 0.3s ease;
+  }
+  
+  .favorite-heart.active {
+    fill: red;
+    stroke: red;
+    transition: fill 0.3s ease;
+  }
+  
+
+  .favorites-page{
+      padding-top: 2rem;
+  }
+  
+  .full-width{
+      width: 100%;
+  }
